@@ -3,6 +3,8 @@
 
 # Visual Studio settings
 .vs/
+.idea/
+cmake-build*
 CMakeSettings.json
 
 # Build directory

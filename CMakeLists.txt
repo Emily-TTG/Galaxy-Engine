@@ -9,6 +9,8 @@ project(GalaxyEngine)
 
 include(FetchContent)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/ffmpeg.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/glm.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/openmp.cmake)
@@ -18,7 +20,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/yaml.cmake)
 
 set(
     GALAXYENGINE_SOURCES
-    main.cpp
     globalLogic.cpp
     parameters.cpp
     Particles/particleSelection.cpp
@@ -31,6 +32,7 @@ set(
     Physics/slingshot.cpp
     Physics/SPH.cpp
     Sound/sound.cpp
+    Mod/modState.cpp
     UI/brush.cpp
     UI/controls.cpp
     UI/rightClickSettings.cpp
@@ -42,13 +44,13 @@ set(
 
 list(TRANSFORM GALAXYENGINE_SOURCES PREPEND ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/src/)
 
-add_executable(GalaxyEngine ${GALAXYENGINE_SOURCES})
+add_library(GalaxyEngine SHARED ${GALAXYENGINE_SOURCES})
 
 target_precompile_headers(GalaxyEngine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/include/pch.h)
 
 target_include_directories(GalaxyEngine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/include)
 
-target_compile_features(GalaxyEngine PRIVATE cxx_std_20)
+target_compile_features(GalaxyEngine PUBLIC cxx_std_20)
 set_target_properties(
         GalaxyEngine PROPERTIES
         MSVC_RUNTIME_LIBRARY MultiThreadedDLL
@@ -65,3 +67,8 @@ if(WIN32)
             COMMAND
                 ${CMAKE_COMMAND} -E copy_directory ${ffmpeg-fetch_SOURCE_DIR}/bin $<TARGET_FILE_DIR:GalaxyEngine>)
 endif()
+
+add_executable(
+        GalaxyEngineMain ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/src/main.cpp)
+
+target_link_libraries(GalaxyEngineMain PRIVATE GalaxyEngine)

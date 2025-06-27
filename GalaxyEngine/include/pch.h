@@ -14,12 +14,15 @@
 #include <array>
 #include <algorithm>
 #include <memory>
-#include <limits> 
+#include <optional>
+#include <limits>
 #include <chrono>
 #include <regex>
 #include <variant>
 #include <thread>
 #include <bitset>
+#include <source_location>
+#include <typeinfo>
 
 // C stdlib
 #include <cmath>

@@ -1,6 +1,8 @@
 #include "globalLogic.h"
+#include "Mod/modState.h"
 
 int main(int argc, char** argv) {
+	ModRegistry::Get().Add("../testmod.so");
 
 	// SPH Materials initialization
 	SPHMaterials::Init();
