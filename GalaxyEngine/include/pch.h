@@ -23,6 +23,10 @@
 #include <bitset>
 #include <source_location>
 #include <typeinfo>
+#include <type_traits>
+#include <functional>
+#include <shared_mutex>
+#include <mutex>
 
 // C stdlib
 #include <cmath>

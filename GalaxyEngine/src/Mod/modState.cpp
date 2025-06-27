@@ -3,18 +3,15 @@
 #ifdef _WIN32
 #else
 # include <dlfcn.h>
-#endif
-
-#ifndef _MSC_VER
-# include <cxxabi.h>
+# include <execinfo.h>
 #endif
 
 ModRegistry ModRegistry::globalRegistry;
 
-// TODO: If/when the GE core itself is split out into a module -- this should
-//  	 Be populated.
-struct GEModInitReport GEMod::Startup(const struct GEModInitData&) { return {}; }
-bool GEMod::CheckTerminal(const std::string&) { return {}; }
+struct GEModInitReport GEMod::Startup(const struct GEModInitData& data) {
+	return {};
+}
+
 void GEMod::Teardown() {}
 
 Mod::Mod(const std::string& path) {
@@ -25,56 +22,14 @@ Mod::Mod(const std::string& path) {
 	if(!module) {
 		std::cerr << "Failed to load mod `" << path << "`: " << dlerror() << std::endl;
 	}
-
-	auto& info = typeid(GEMod::CheckTerminal);
-	auto name = info.name();
-	check_terminal = (CheckFn*) GetSym(name);
 #endif
 
-	struct GEModInitData init;
-	auto eval = HookAt(&GEMod::Startup, init);
-	std::cout << "Mod `" << eval.first.name << "` loaded" << std::endl;
+	report = CallSym<decltype(GEMod::Startup)>(SymName((HookFn*) &GEMod::Startup), GEModInitData{});
+	std::cout << "Mod `" << report.name << "` loaded" << std::endl;
 }
 
 Mod::~Mod() {
 	if(module) dlclose(module);
-}
-
-Mod::Mod(Mod&& other) noexcept {
-	module = nullptr;
-	hooks = std::move(other.hooks);
-	report = std::move(other.report);
-	check_terminal = other.check_terminal;
-}
-
-Mod& Mod::operator=(Mod&& other) noexcept {
-	module = nullptr;
-	hooks = std::move(other.hooks);
-	report = std::move(other.report);
-	check_terminal = other.check_terminal;
-	return *this;
-}
-
-Mod::HookFn* Mod::GetSym(const std::string& sym) {
-#ifdef _WIN32
-#else
-	return (HookFn*) dlsym(module, sym.c_str());
-#endif
-}
-
-std::optional<std::string> Mod::Demangle(const std::string& mangled) {
-#ifdef _WIN32
-#else
-	int result;
-	char* demangled = abi::__cxa_demangle(mangled.c_str(), nullptr, nullptr, &result);
-	if(!result) {
-		auto ret = std::string(demangled);
-		free(demangled);
-		return ret;
-	}
-
-	return std::nullopt;
-#endif
 }
 
 std::string Mod::SymName(HookFn* fn) {
@@ -86,6 +41,36 @@ std::string Mod::SymName(HookFn* fn) {
 	if(!result) return "<unk>";
 
 	return info.dli_sname;
+#endif
+}
+
+std::string Mod::CurrentSym() {
+#ifdef _WIN32
+#else
+	void* array[2];
+	backtrace(array, std::size(array));
+
+	return SymName((HookFn*) array[1]);
+#endif
+}
+
+Mod::Mod(Mod&& other) noexcept {
+	module = nullptr;
+	hooks = std::move(other.hooks);
+	report = std::move(other.report);
+}
+
+Mod& Mod::operator=(Mod&& other) noexcept {
+	module = nullptr;
+	hooks = std::move(other.hooks);
+	report = std::move(other.report);
+	return *this;
+}
+
+Mod::HookFn* Mod::GetSym(const std::string& sym) {
+#ifdef _WIN32
+#else
+	return (HookFn*) dlsym(module, sym.c_str());
 #endif
 }
 

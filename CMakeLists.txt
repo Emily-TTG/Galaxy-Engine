@@ -18,6 +18,13 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/raylib.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/imgui.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/yaml.cmake)
 
+add_library(GalaxyEngineInterface INTERFACE)
+target_precompile_headers(GalaxyEngineInterface INTERFACE ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/include/pch.h)
+target_include_directories(GalaxyEngineInterface INTERFACE ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/include)
+target_compile_features(GalaxyEngineInterface INTERFACE cxx_std_20)
+
+target_link_libraries(GalaxyEngineInterface INTERFACE raylib-lib ffmpeg imgui glm-lib openmp yaml-cpp::yaml-cpp)
+
 set(
     GALAXYENGINE_SOURCES
     globalLogic.cpp
@@ -45,18 +52,12 @@ set(
 list(TRANSFORM GALAXYENGINE_SOURCES PREPEND ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/src/)
 
 add_library(GalaxyEngine SHARED ${GALAXYENGINE_SOURCES})
-
-target_precompile_headers(GalaxyEngine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/include/pch.h)
-
-target_include_directories(GalaxyEngine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/include)
-
-target_compile_features(GalaxyEngine PUBLIC cxx_std_20)
 set_target_properties(
         GalaxyEngine PROPERTIES
         MSVC_RUNTIME_LIBRARY MultiThreadedDLL
         VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine)
 
-target_link_libraries(GalaxyEngine PUBLIC raylib-lib ffmpeg imgui glm-lib openmp yaml-cpp::yaml-cpp)
+target_link_libraries(GalaxyEngine PUBLIC GalaxyEngineInterface)
 
 if(WIN32)
     target_link_libraries(GalaxyEngine PUBLIC winmm)
@@ -70,5 +71,10 @@ endif()
 
 add_executable(
         GalaxyEngineMain ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/src/main.cpp)
+
+set_target_properties(
+        GalaxyEngineMain PROPERTIES
+        MSVC_RUNTIME_LIBRARY MultiThreadedDLL
+        VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine)
 
 target_link_libraries(GalaxyEngineMain PRIVATE GalaxyEngine)

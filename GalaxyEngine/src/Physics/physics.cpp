@@ -1,6 +1,10 @@
 #include "Physics/physics.h"
 
+#include "Mod/modState.h"
+
 glm::vec2 Physics::calculateForceFromGrid(const Quadtree& grid, std::vector<ParticlePhysics>& pParticles, UpdateVariables& myVar, ParticlePhysics& pParticle) {
+	GE_HOOK(Physics::calculateForceFromGrid, this, grid, pParticles, myVar, pParticle);
+
 	glm::vec2 totalForce = { 0.0f, 0.0f };
 
 	if (grid.gridMass <= 0)
