@@ -1,5 +1,7 @@
 #include "Sound/sound.h"
 
+#include "Mod/modState.h"
+
 Sound GESound::intro;
 Sound GESound::soundButtonHover1;
 Sound GESound::soundButtonHover2;
@@ -19,6 +21,8 @@ std::vector<Sound> GESound::soundButtonDisablePool;
 std::vector<Sound> GESound::soundSliderSlidePool;
 
 void GESound::loadSounds() {
+	GE_HOOK(GESound::loadSounds, this);
+
 	InitAudioDevice();
 
 	SetMasterVolume(globalVolume);
@@ -59,6 +63,8 @@ void GESound::loadSounds() {
 }
 
 void GESound::soundtrackLogic() {
+	GE_HOOK(GESound::soundtrackLogic, this);
+
     SetMasterVolume(globalVolume);
     SetMusicVolume(currentMusic, musicVolume * musicVolMultiplier);
 
@@ -121,6 +127,8 @@ void GESound::soundtrackLogic() {
 }
 
 void GESound::unloadSounds() {
+	GE_HOOK(GESound::unloadSounds, this);
+
 	UnloadSound(intro);
 
 	UnloadSound(soundButtonHover1);

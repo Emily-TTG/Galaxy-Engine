@@ -3,9 +3,12 @@
 #include "Physics/physics.h"
 #include "Physics/quadtree.h"
 
+#include "Mod/modState.h"
+
 #include "parameters.h"
 
 void ParticlesSpawning::particlesInitialConditions(Quadtree* quadtree, Physics& physics, UpdateVariables& myVar, UpdateParameters& myParam) {
+	GE_HOOK(ParticlesSpawning::particlesInitialConditions, this, quadtree, physics, myVar, myParam);
 
 	if (myVar.isMouseNotHoveringUI && isSpawningAllowed) {
 
@@ -539,6 +542,8 @@ void ParticlesSpawning::copyPaste(std::vector<ParticlePhysics>& pParticles, std:
 	bool& isDragging, SceneCamera& myCamera, std::vector<ParticlePhysics>& pParticlesSelected, Physics& physics, 
 	UpdateVariables& myVar, UpdateParameters& myParam) {
 
+	GE_HOOK(ParticlesSpawning::copyPaste, this, pParticles, rParticles, isDragging, myCamera, pParticlesSelected, physics, myVar, myParam);
+
 	if (IO::shortcutPress(KEY_H) && pParticlesSelected.size() > 0) {
 
 		pParticlesCopied.clear();
@@ -609,6 +614,8 @@ void ParticlesSpawning::copyPaste(std::vector<ParticlePhysics>& pParticles, std:
 void ParticlesSpawning::predictTrajectory(const std::vector<ParticlePhysics>& pParticles,
 	SceneCamera& myCamera, Physics physics, Quadtree* quadtree,
 	UpdateVariables& myVar, Slingshot& slingshot) {
+
+	GE_HOOK(ParticlesSpawning::predictTrajectory, this, pParticles, myCamera, physics, quadtree, myVar, slingshot);
 
 	if (!IsMouseButtonDown(0)) {
 		return;

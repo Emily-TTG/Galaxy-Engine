@@ -2,6 +2,8 @@
 
 #include "UX/screenCapture.h"
 
+#include "Mod/modState.h"
+
 #include "parameters.h"
 
 extern "C" {
@@ -14,6 +16,8 @@ extern "C" {
 }
 
 void ScreenCapture::cleanupFFmpeg() {
+	GE_HOOK(ScreenCapture::cleanupFFmpeg, this);
+
 	if (pCodecCtx) {
 		avcodec_send_frame(pCodecCtx, nullptr);
 
@@ -58,6 +62,8 @@ void ScreenCapture::exportFrameToFile(const Image& frame,
 	const std::string& videoName,
 	int frameNumber) {
 
+	GE_HOOK(ScreenCapture::exportFrameToFile, this, frame, videoFolder, videoName, frameNumber);
+
 	if (!std::filesystem::exists(videoFolder)) {
 		printf("Warning: Frame export folder does not exist: %s\n",
 			videoFolder.c_str());
@@ -82,6 +88,8 @@ void ScreenCapture::exportFrameToFile(const Image& frame,
 }
 
 void ScreenCapture::exportMemoryFramesToDisk() {
+	GE_HOOK(ScreenCapture::exportMemoryFramesToDisk, this);
+
 	if (myFrames.empty()) {
 		printf("No frames in memory to export.\n");
 		return;
@@ -135,6 +143,8 @@ void ScreenCapture::exportMemoryFramesToDisk() {
 }
 
 void ScreenCapture::discardMemoryFrames() {
+	GE_HOOK(ScreenCapture::discardMemoryFrames, this);
+
 	if (myFrames.empty()) {
 		printf("No frames in memory to discard.\n");
 		return;
@@ -153,6 +163,8 @@ void ScreenCapture::discardMemoryFrames() {
 }
 
 void ScreenCapture::createFramesFolder(const std::string& folderPath) {
+	GE_HOOK(ScreenCapture::createFramesFolder, this, folderPath);
+
 	if (!std::filesystem::exists(folderPath)) {
 		try {
 			std::filesystem::create_directories(folderPath);
@@ -164,6 +176,8 @@ void ScreenCapture::createFramesFolder(const std::string& folderPath) {
 }
 
 void ScreenCapture::discardRecording() {
+	GE_HOOK(ScreenCapture::discardRecording, this);
+
 	// Clean up video folder and any files if it was created
 	if (!this->videoFolder.empty()) {
 		try {
@@ -217,6 +231,8 @@ void ScreenCapture::discardRecording() {
 }
 
 std::string ScreenCapture::generateVideoFilename() {
+	GE_HOOK(ScreenCapture::generateVideoFilename, this);
+
 	int maxNumberFound = 0;
 	const std::string prefix = "Video_";
 
@@ -250,6 +266,8 @@ std::string ScreenCapture::generateVideoFilename() {
 bool ScreenCapture::screenGrab(RenderTexture2D& myParticlesTexture,
 	UpdateVariables& myVar,
 	UpdateParameters& myParam) {
+
+	GE_HOOK(ScreenCapture::screenGrab, this, myParticlesTexture, myVar, myParam);
 
 	if (IO::shortcutPress(KEY_S)) {
 		if (!std::filesystem::exists("Screenshots")) {

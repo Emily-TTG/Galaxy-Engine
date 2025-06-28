@@ -1,12 +1,17 @@
 #pragma once
 
 struct GEModInitData {};
+// TODO: This needs a few extra pieces of info -- version, compat, description,
+//  	 respath etc.
 struct GEModInitReport {
 	std::string name{ "<unset>" };
 };
 
 class GEMod {
 public:
+	// TODO: Allow user to enable/disable mods at runtime. Document that
+	//		 teardown must remove any mod-specific data and may not represent
+	//		 the end of program runtime.
 	static struct GEModInitReport Startup(const struct GEModInitData&);
 	static void Teardown();
 };
@@ -27,6 +32,8 @@ public:
 	explicit Mod(const std::string&);
 	~Mod();
 
+	bool Valid() { return !!module; }
+
 	// TODO: Way to provide a default return value instead of presuming default constructor is appropriate.
 	template<typename Fn, typename... Args>
 	auto HookAt(const std::string& symbol, Args&&... fwd) {
@@ -41,7 +48,7 @@ public:
 			// Try again in case someone else beat us to it.
 			it = hooks.find(symbol);
 			if(it == hooks.end()) {
-				std::cout << "Populating hook `" << symbol << "` for mod `"  << report.name << "`" << std::endl;
+				//std::cout << "Populating hook `" << symbol << "` for mod `"  << report.name << "`" << std::endl;
 
 				auto sym = GetSym(symbol);
 				auto emplace = hooks.try_emplace(symbol, sym);
@@ -51,7 +58,7 @@ public:
 				}
 
 				if(!sym) {
-					std::cout << "`" << symbol << "` not found in mod `"  << report.name << "`" << std::endl;
+					//std::cout << "`" << symbol << "` not found in mod `"  << report.name << "`" << std::endl;
 					return VoidOrDefault<Res>();
 				}
 				else {
@@ -113,10 +120,17 @@ class ModRegistry {
 public:
 	static auto& Get() { return globalRegistry; }
 
-	Mod& Add(const std::string &);
+	void Add(const std::string& path) {
+		Mod mod{ path };
+		if(mod.Valid()) mods.emplace_back(std::move(mod));
+	}
+
 	auto& GetMods() { return mods; }
 };
 
+// NOTE: This is a macro rather than a function for the following reasons:
+//		 a) the persistent `hook_symbol_` static needs to be held at callsite.
+//		 b) hooks in future will be able to force early return from the vanilla proc.
 #define GE_HOOK(fn, ...) \
 		do { \
 			auto& hook_mods_ = ModRegistry::Get().GetMods(); \

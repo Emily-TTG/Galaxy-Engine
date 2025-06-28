@@ -1,5 +1,7 @@
 #include "globalLogic.h"
 
+#include "Mod/modState.h"
+
 UpdateParameters myParam;
 UpdateVariables myVar;
 UI myUI;
@@ -15,12 +17,17 @@ std::unordered_map<unsigned int, uint64_t> NeighborSearch::idToIndex;
 
 Quadtree* gridFunction(std::vector<ParticlePhysics>& pParticles,
 	std::vector<ParticleRendering>& rParticles) {
+
+	GE_HOOK(gridFunction, pParticles, rParticles);
+
 	Quadtree* grid = Quadtree::boundingBox(pParticles, rParticles);
 	return grid;
 }
 
 
 void flattenQuadtree(Quadtree* node, std::vector<Quadtree*>& flatList) {
+	GE_HOOK(flattenQuadtree, node, flatList);
+
 	if (!node) return;
 
 	flatList.push_back(node);
@@ -33,6 +40,7 @@ void flattenQuadtree(Quadtree* node, std::vector<Quadtree*>& flatList) {
 
 // THIS FUNCTION IS MEANT FOR QUICK DEBUGGING WHERE YOU NEED TO CHECK A SPECIFIC PARTICLE'S VARIABLES
 void selectedParticleDebug() {
+	GE_HOOK(selectedParticleDebug);
 
 	for (size_t i = 0; i < myParam.pParticles.size(); i++) {
 		ParticlePhysics& p = myParam.pParticles[i];
@@ -44,6 +52,7 @@ void selectedParticleDebug() {
 }
 
 void pinParticles() {
+	GE_HOOK(pinParticles);
 
 	if (myVar.pinFlag) {
 		for (size_t i = 0; i < myParam.pParticles.size(); i++) {
@@ -80,6 +89,7 @@ void pinParticles() {
 }
 
 void updateScene() {
+	GE_HOOK(updateScene);
 
 	Quadtree* grid = nullptr;
 
@@ -274,6 +284,7 @@ void updateScene() {
 }
 
 void drawConstraints() {
+	GE_HOOK(drawConstraints);
 
 	if (myVar.visualizeMesh) {
 		rlBegin(RL_LINES);
@@ -432,6 +443,7 @@ std::vector<std::pair<std::string, int>> introMessages = {
 };
 
 void drawScene(Texture2D& particleBlurTex, RenderTexture2D& myUITexture, RenderTexture2D& myMiscTexture, bool& fadeActive, bool& introActive) {
+	GE_HOOK(drawScene, particleBlurTex, myUITexture, myMiscTexture, fadeActive, introActive);
 
 	for (int i = 0; i < myParam.pParticles.size(); ++i) {
 
@@ -593,6 +605,8 @@ float lastMusicVolume = -1.0f;
 int lastMessageIndex = -1;
 
 void saveConfigIfChanged() {
+	GE_HOOK(saveConfigIfChanged);
+
 	if (geSound.globalVolume != lastGlobalVolume ||
 		geSound.menuVolume != lastMenuVolume ||
 		geSound.musicVolume != lastMusicVolume ||
@@ -608,6 +622,8 @@ void saveConfigIfChanged() {
 }
 
 void saveConfig() {
+	GE_HOOK(saveConfig);
+
 	if (!std::filesystem::exists("Config")) {
 		std::filesystem::create_directory("Config");
 	}
@@ -622,6 +638,7 @@ void saveConfig() {
 }
 
 void loadConfig() {
+	GE_HOOK(loadConfig);
 
 	YAML::Node config = YAML::LoadFile("Config/config.txt");
 
@@ -636,6 +653,8 @@ void loadConfig() {
 }
 
 void enableMultiThreading() {
+	GE_HOOK(enableMultiThreading);
+
 	if (myVar.isMultiThreadingEnabled) {
 		omp_set_num_threads(myVar.threadsAmount);
 	}
@@ -647,6 +666,8 @@ void enableMultiThreading() {
 void fullscreenToggle(int& lastScreenWidth, int& lastScreenHeight,
 	bool& wasFullscreen, bool& lastScreenState,
 	RenderTexture2D& myParticlesTexture, RenderTexture2D& myUITexture) {
+
+	GE_HOOK(fullscreenToggle, lastScreenWidth, lastScreenHeight, wasFullscreen, lastScreenState, myParticlesTexture, myUITexture);
 
 	if (myVar.fullscreenState != lastScreenState) {
 		int monitor = GetCurrentMonitor();

@@ -1,8 +1,11 @@
 #include "Particles/particleSubdivision.h"
 
+#include "Mod/modState.h"
+
 #include "parameters.h"
 
 void ParticleSubdivision::subdivideParticles(UpdateVariables& myVar, UpdateParameters& myParam) {
+	GE_HOOK(ParticleSubdivision::subdivideParticles, this, myVar, myParam);
 
 	if (subdivideAll || subdivideSelected) {
 

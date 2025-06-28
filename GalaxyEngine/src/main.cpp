@@ -2,6 +2,14 @@
 #include "Mod/modState.h"
 
 int main(int argc, char** argv) {
+	if(std::filesystem::exists("Mods")) {
+		for(const auto& it : std::filesystem::directory_iterator("Mods")) {
+			if(!it.is_regular_file()) continue;
+
+			ModRegistry::Get().Add(it.path());
+		}
+	}
+
 	// SPH Materials initialization
 	SPHMaterials::Init();
 

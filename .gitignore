@@ -13,6 +13,7 @@ GalaxyEngine/build/
 
 # Output directories
 GalaxyEngine/Videos
+GalaxyEngine/Mods
 GalaxyEngine/Saves
 GalaxyEngine/Screenshot_*
 GalaxyEngine/Screenshots/

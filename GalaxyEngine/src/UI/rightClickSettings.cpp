@@ -1,11 +1,15 @@
 #include "UI/rightClickSettings.h"
 #include "UI/UI.h"
 
+#include "Mod/modState.h"
+
 #include "parameters.h"
 
 void RightClickSettings::rightClickMenuSpawnLogic(bool& isMouseNotHoveringUI,
 	bool& isSpawningAllowed, bool& isDragging, bool& selectedColor)
 {
+	GE_HOOK(RightClickSettings::rightClickMenuSpawnLogic, this, isMouseNotHoveringUI, isSpawningAllowed, isDragging, selectedColor);
+
 	static bool     isMouseMoving = false;
 	static glm::vec2  dragStartPos = { 0.0f, 0.0f };
 	static bool     spawnBlocked = false;
@@ -61,6 +65,7 @@ void RightClickSettings::rightClickMenuSpawnLogic(bool& isMouseNotHoveringUI,
 
 
 void RightClickSettings::rightClickMenu(UpdateVariables& myVar, UpdateParameters& myParam) {
+	GE_HOOK(RightClickSettings::rightClickMenu, this, myVar, myParam);
 
 	rightClickMenuSpawnLogic(myVar.isMouseNotHoveringUI, myParam.particlesSpawning.isSpawningAllowed, myVar.isDragging, myParam.colorVisuals.selectedColor);
 

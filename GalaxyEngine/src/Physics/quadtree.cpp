@@ -2,6 +2,8 @@
 
 #include "Physics/quadtree.h"
 
+#include "Mod/modState.h"
+
 Quadtree::Quadtree(glm::vec2 pos, float size,
 	size_t startIndex, size_t endIndex,
 	const std::vector<ParticlePhysics>& pParticles, const std::vector<ParticleRendering>& rParticles,
@@ -40,6 +42,7 @@ size_t dualPartition(std::vector<T>& pParticlesVector, std::vector<U>& rParticle
 }
 
 void Quadtree::subGridMaker(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles) {
+	GE_HOOK(Quadtree::subGridMaker, this, pParticles, rParticles);
 
 	glm::vec2 mid = pos + size * 0.5f;
 
@@ -85,6 +88,8 @@ float Quadtree::boundingBoxSize = 0.0f;
 Quadtree* Quadtree::boundingBox(const std::vector<ParticlePhysics>& pParticles,
 	const std::vector<ParticleRendering>& rParticles) {
 
+	GE_HOOK(Quadtree::boundingBox, pParticles, rParticles);
+
 	glm::vec2 min = glm::vec2(std::numeric_limits<float>::max());
 	glm::vec2 max = glm::vec2(std::numeric_limits<float>::lowest());
 
@@ -104,6 +109,8 @@ Quadtree* Quadtree::boundingBox(const std::vector<ParticlePhysics>& pParticles,
 }
 
 void Quadtree::drawQuadtree() {
+	GE_HOOK(Quadtree::drawQuadtree, this);
+
 	DrawRectangleLinesEx({ pos.x, pos.y, size, size }, 1.0f, WHITE);
 
 	if (gridMass > 0) {

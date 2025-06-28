@@ -54,6 +54,7 @@ glm::vec2 Physics::calculateForceFromGrid(const Quadtree& grid, std::vector<Part
 }
 
 void Physics::temperatureCalculation(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles, UpdateVariables& myVar) {
+	GE_HOOK(Physics::temperatureCalculation, this, pParticles, rParticles, myVar);
 
 	for (size_t i = 0; i < pParticles.size(); i++) {
 		ParticlePhysics& p = pParticles[i];
@@ -142,6 +143,8 @@ void Physics::temperatureCalculation(std::vector<ParticlePhysics>& pParticles, s
 
 void Physics::createConstraints(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles, bool& constraintCreateSpecialFlag,
 	UpdateVariables& myVar) {
+
+	GE_HOOK(Physics::createConstraints, this, pParticles, rParticles, constraintCreateSpecialFlag, myVar);
 
 	bool shouldCreateConstraints = IO::shortcutPress(KEY_P) || myVar.constraintAllSolids || constraintCreateSpecialFlag || myVar.constraintSelected;
 
@@ -250,6 +253,7 @@ void Physics::createConstraints(std::vector<ParticlePhysics>& pParticles, std::v
 }
 
 void Physics::constraints(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles, UpdateVariables& myVar) {
+	GE_HOOK(Physics::constraints, this, pParticles, rParticles, myVar);
 
 	if (myVar.deleteAllConstraints) {
 		particleConstraints.clear();
@@ -424,6 +428,7 @@ void Physics::constraints(std::vector<ParticlePhysics>& pParticles, std::vector<
 }
 
 void Physics::pausedConstraints(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles, UpdateVariables& myVar) {
+	GE_HOOK(Physics::pausedConstraints, this, pParticles, rParticles, myVar);
 
 	for (size_t i = 0; i < particleConstraints.size(); i++) {
 		auto& constraint = particleConstraints[i];
@@ -434,6 +439,8 @@ void Physics::pausedConstraints(std::vector<ParticlePhysics>& pParticles, std::v
 }
 
 void Physics::physicsUpdate(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles, UpdateVariables& myVar, bool& sphGround) {
+	GE_HOOK(Physics::physicsUpdate, this, pParticles, rParticles, myVar, sphGround);
+
 	if (myVar.isPeriodicBoundaryEnabled) {
 		for (size_t i = 0; i < pParticles.size(); i++) {
 
@@ -517,6 +524,8 @@ void Physics::physicsUpdate(std::vector<ParticlePhysics>& pParticles, std::vecto
 
 void Physics::collisions(ParticlePhysics& pParticleA, ParticlePhysics& pParticleB,
 	ParticleRendering& rParticleA, ParticleRendering& rParticleB, float& radius) {
+
+	GE_HOOK(Physics::collisions, this, pParticleA, pParticleB, rParticleA, rParticleB, radius);
 
 	// IN THIS CODE I ONLY KEEP THE POSITION CORRECTION. COLLISION MODE IS NOT SUPPORTED ANYMORE BUT THE COMMENTED CODE MIGHT STILL BE OF USE SOME TIME
 
@@ -607,6 +616,8 @@ void Physics::collisions(ParticlePhysics& pParticleA, ParticlePhysics& pParticle
 
 void Physics::buildGrid(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles,
 	Physics& physics, glm::vec2& domainSize, const int& iterations) {
+
+	GE_HOOK(Physics::buildGrid, this, pParticles, rParticles, physics, domainSize, iterations);
 
 	// Some code from here is not needed anymore. I keep it because it might be useful some time
 

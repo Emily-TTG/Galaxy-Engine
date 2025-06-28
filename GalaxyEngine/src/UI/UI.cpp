@@ -1,7 +1,9 @@
 #include "UI/UI.h"
 
-void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, SaveSystem& save, GESound& geSound) {
+#include "Mod/modState.h"
 
+void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, SaveSystem& save, GESound& geSound) {
+	GE_HOOK(UI::uiLogic, this, myParam, myVar, sph, save, geSound);
 
 	if (IO::shortcutPress(KEY_U)) {
 		showSettings = !showSettings;
@@ -436,6 +438,7 @@ void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, Sa
 }
 
 void UI::statsWindowLogic(UpdateParameters& myParam, UpdateVariables& myVar) {
+	GE_HOOK(UI::statsWindowLogic, this, myParam, myVar);
 
 	ImGui::Spacing();
 	ImGui::Separator();
@@ -698,6 +701,8 @@ void UI::plotLinesHelper(const float& timeFactor, std::string label,
 	const int length,
 	float value, const float minValue, const float maxValue, ImVec2 size) {
 
+	GE_HOOK(UI::plotLinesHelper, timeFactor, label, length, value, minValue, maxValue, size);
+
 	auto& plotData = plotDataMap[label];
 
 	if (plotData.values.size() != length) {
@@ -746,6 +751,8 @@ static bool wasHovered = false;
 
 bool UI::buttonHelper(std::string label, std::string tooltip, bool& parameter,
 	float sizeX, float sizeY, bool canSelfDeactivate, bool& isEnabled) {
+
+	GE_HOOK(UI::buttonHelper, label, tooltip, parameter, sizeX, sizeY, canSelfDeactivate, isEnabled);
 
 	ImGuiID buttonId = ImGui::GetID(label.c_str());
 	static std::unordered_map<ImGuiID, bool> hoverStates;
@@ -888,6 +895,8 @@ bool UI::buttonHelper(std::string label, std::string tooltip, bool& parameter,
 
 void UI::sliderHelper(std::string label, std::string tooltip, float& parameter, float minVal, float maxVal,
 	float sizeX, float sizeY, bool& isEnabled) {
+
+	// TODO: Need to fix mod hooks for overrides for `sliderHelper`s.
 
 	ImGuiID sliderId = ImGui::GetID(label.c_str());
 	static std::unordered_map<ImGuiID, bool> hoverStates;

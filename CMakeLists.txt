@@ -23,6 +23,7 @@ target_precompile_headers(GalaxyEngineInterface INTERFACE ${CMAKE_CURRENT_LIST_D
 target_include_directories(GalaxyEngineInterface INTERFACE ${CMAKE_CURRENT_LIST_DIR}/GalaxyEngine/include)
 target_compile_features(GalaxyEngineInterface INTERFACE cxx_std_20)
 
+# TODO: Only want the header interfaces of these [extract from targets]; as-is duplicates global state/statics.
 target_link_libraries(GalaxyEngineInterface INTERFACE raylib-lib ffmpeg imgui glm-lib openmp yaml-cpp::yaml-cpp)
 
 set(

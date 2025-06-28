@@ -1,6 +1,9 @@
 #include "UX/saveSystem.h"
 
+#include "Mod/modState.h"
+
 void SaveSystem::saveSystem(const std::string& filename, UpdateVariables& myVar, UpdateParameters& myParam, SPH& sph, Physics& physics) {
+	GE_HOOK(SaveSystem::saveSystem, this, filename, myVar, myParam, sph, physics);
 
 	YAML::Emitter out;
 	/*out << YAML::BeginMap;*/
@@ -213,6 +216,8 @@ void SaveSystem::saveSystem(const std::string& filename, UpdateVariables& myVar,
 }
 
 void SaveSystem::saveLoadLogic(UpdateVariables& myVar, UpdateParameters& myParam, SPH& sph, Physics& physics) {
+	GE_HOOK(SaveSystem::saveLoadLogic, this, myVar, myParam, sph, physics);
+
 	if (saveFlag) {
 		if (!std::filesystem::exists("Saves")) {
 			std::filesystem::create_directory("Saves");

@@ -1,5 +1,7 @@
 #include "UI/brush.h"
 
+#include "Mod/modState.h"
+
 #include "parameters.h"
 
 struct SPHWater water;
@@ -17,6 +19,7 @@ Brush::Brush(SceneCamera myCamera, float brushRadius) {
 }
 
 void Brush::brushLogic(UpdateParameters& myParam, bool& isSPHEnabled, bool& constraintAfterDrawing) {
+	GE_HOOK(Brush::brushLogic, this, myParam, isSPHEnabled, constraintAfterDrawing);
 
 	// This entire function is a crime against programming and perhaps humanity as well. I don't know what destiny shall await for whoever reads such cursed code. 
 	// But I'm too lazy to change this for now. Will change it some time in the future
@@ -621,6 +624,8 @@ void Brush::brushLogic(UpdateParameters& myParam, bool& isSPHEnabled, bool& cons
 }
 
 void Brush::brushSize() {
+	GE_HOOK(Brush::brushSize, this);
+
 	float wheel = GetMouseWheelMove();
 	if (IO::shortcutDown(KEY_LEFT_CONTROL) && wheel != 0) {
 		float scale = 0.2f * wheel;
@@ -629,10 +634,13 @@ void Brush::brushSize() {
 }
 
 void Brush::drawBrush(glm::vec2 mouseWorldPos) {
+	GE_HOOK(Brush::drawBrush, this, mouseWorldPos);
+
 	DrawCircleLinesV({ mouseWorldPos.x, mouseWorldPos.y }, brushRadius, WHITE);
 }
 
 void Brush::eraseBrush(UpdateParameters& myParam) {
+	GE_HOOK(Brush::eraseBrush, this, myParam);
 
 	if (IO::shortcutDown(KEY_X) && IsMouseButtonDown(2)) {
 		for (size_t i = 0; i < myParam.pParticles.size();) {
@@ -659,6 +667,7 @@ void Brush::eraseBrush(UpdateParameters& myParam) {
 }
 
 void Brush::particlesAttractor(UpdateVariables& myVar, UpdateParameters& myParam) {
+	GE_HOOK(Brush::particlesAttractor, this, myVar, myParam);
 
 	if (IO::shortcutDown(KEY_B)) {
 
@@ -705,6 +714,7 @@ void Brush::particlesAttractor(UpdateVariables& myVar, UpdateParameters& myParam
 }
 
 void Brush::particlesSpinner(UpdateVariables& myVar, UpdateParameters& myParam) {
+	GE_HOOK(Brush::particlesSpinner, this, myVar, myParam);
 
 	if (IO::shortcutDown(KEY_N)) {
 		for (auto& pParticle : myParam.pParticles) {
@@ -732,6 +742,7 @@ void Brush::particlesSpinner(UpdateVariables& myVar, UpdateParameters& myParam) 
 }
 
 void Brush::particlesGrabber(UpdateParameters& myParam) {
+	GE_HOOK(Brush::particlesGrabber, this, myParam);
 
 	glm::vec2 mouseDelta = glm::vec2(GetMouseDelta().x, GetMouseDelta().y);
 	glm::vec2 scaledDelta = mouseDelta * (1.0f / myParam.myCamera.camera.zoom);
@@ -784,6 +795,7 @@ void Brush::particlesGrabber(UpdateParameters& myParam) {
 }
 
 void Brush::temperatureBrush(UpdateParameters& myParam) {
+	GE_HOOK(Brush::temperatureBrush, this, myParam);
 
 	if (IO::shortcutDown(KEY_K) || IO::shortcutDown(KEY_L)) {
 		for (size_t i = 0; i < myParam.pParticles.size(); i++) {

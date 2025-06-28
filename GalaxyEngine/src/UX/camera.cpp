@@ -1,5 +1,7 @@
 #include "UX/camera.h"
 
+#include "Mod/modState.h"
+
 #include "parameters.h"
 
 SceneCamera::SceneCamera() {
@@ -17,6 +19,7 @@ SceneCamera::SceneCamera() {
 }
 
 Camera2D SceneCamera::cameraLogic(bool& loadFlag, bool& isMouseNotHoveringUI) {
+	GE_HOOK(SceneCamera::cameraLogic, this, loadFlag, isMouseNotHoveringUI);
 
 	if (IsMouseButtonDown(1))
 	{
@@ -64,6 +67,7 @@ Camera2D SceneCamera::cameraLogic(bool& loadFlag, bool& isMouseNotHoveringUI) {
 }
 
 void SceneCamera::cameraFollowObject(UpdateVariables& myVar, UpdateParameters& myParam) {
+	GE_HOOK(SceneCamera::cameraFollowObject, this, myVar, myParam);
 
 	mouseWorldPos = glm::vec2(GetScreenToWorld2D(GetMousePosition(), camera).x, GetScreenToWorld2D(GetMousePosition(), camera).y);
 

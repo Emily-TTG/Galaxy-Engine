@@ -1,8 +1,13 @@
 #include "UI/controls.h"
 #include "UI/UI.h"
+
+#include "Mod/modState.h"
+
 #include "parameters.h"
 
 void Controls::showControls() {
+	GE_HOOK(Controls::showControls, this);
+
     if (isShowControlsEnabled) {
 
         float screenW = static_cast<float>(GetScreenWidth());
@@ -35,6 +40,8 @@ void Controls::showControls() {
 }
 
 void Controls::showInfo(bool& fullscreen) {
+	GE_HOOK(Controls::showInfo, this, fullscreen);
+
     if (isInformationEnabled) {
 
         float screenW = static_cast<float>(GetScreenWidth());

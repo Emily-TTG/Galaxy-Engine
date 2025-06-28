@@ -1,6 +1,10 @@
 #include "Physics/morton.h"
 
+#include "Mod/modState.h"
+
 uint32_t Morton::scaleToGrid(float pos, float minVal, float maxVal) {
+	GE_HOOK(Morton::scaleToGrid, this, pos, minVal, maxVal);
+
     if (maxVal <= minVal) return 0;
     float clamped = std::clamp(pos, minVal, maxVal);
     float normalized = (clamped - minVal) / (maxVal - minVal);
@@ -8,6 +12,8 @@ uint32_t Morton::scaleToGrid(float pos, float minVal, float maxVal) {
 }
 
 uint32_t Morton::spreadBits(uint32_t x) {
+	GE_HOOK(Morton::spreadBits, this, x);
+
     x &= 0x7FF;
     x = (x | (x << 8)) & 0x00FF00FF00FF00FF;
     x = (x | (x << 4)) & 0x0F0F0F0F0F0F0F0F;
@@ -17,10 +23,14 @@ uint32_t Morton::spreadBits(uint32_t x) {
 }
 
 uint32_t Morton::morton2D(uint32_t x, uint32_t y) {
+	GE_HOOK(Morton::morton2D, this, x, y);
+
     return spreadBits(x) | (spreadBits(y) << 1);
 }
 
 void Morton::computeMortonKeys(std::vector<ParticlePhysics>& pParticles, glm::vec2& minPosition, float& size){
+	GE_HOOK(Morton::computeMortonKeys, this, pParticles, minPosition, size);
+
     const float maxX = minPosition.x + std::max(size, 1e-6f);
     const float maxY = minPosition.y + std::max(size, 1e-6f);
 
@@ -35,6 +45,7 @@ void Morton::sortParticlesByMortonKey(
     std::vector<ParticlePhysics>& pParticles,
     std::vector<ParticleRendering>& rParticles)
 {
+	GE_HOOK(Morton::sortParticlesByMortonKey, pParticles, rParticles);
 
     std::vector<size_t> indices(pParticles.size());
     for (size_t i = 0; i < indices.size(); i++) {

@@ -6,6 +6,7 @@ class Slingshot {
 public:
 	glm::vec2 norm;
 	float length;
+	Slingshot() = default;
 	Slingshot(glm::vec2 norm, float length);
 
 	

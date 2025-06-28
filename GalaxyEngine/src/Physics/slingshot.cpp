@@ -2,6 +2,8 @@
 
 #include "Physics/slingshot.h"
 
+#include "Mod/modState.h"
+
 glm::vec2 slingshotPos = { 0, 0 };
 
 Slingshot::Slingshot(glm::vec2 norm, float length) {
@@ -11,6 +13,7 @@ Slingshot::Slingshot(glm::vec2 norm, float length) {
 
 
 Slingshot Slingshot::particleSlingshot(bool &isDragging, SceneCamera myCamera) {
+	GE_HOOK(Slingshot::particleSlingshot, isDragging, myCamera);
 
 	if (IsMouseButtonPressed(1)) {
 		isDragging = false;
