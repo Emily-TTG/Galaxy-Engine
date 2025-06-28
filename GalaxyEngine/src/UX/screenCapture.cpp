@@ -16,7 +16,7 @@ extern "C" {
 }
 
 void ScreenCapture::cleanupFFmpeg() {
-	GE_HOOK(ScreenCapture::cleanupFFmpeg, this);
+	GE_HOOK_V(ScreenCapture::cleanupFFmpeg, this);
 
 	if (pCodecCtx) {
 		avcodec_send_frame(pCodecCtx, nullptr);
@@ -62,7 +62,7 @@ void ScreenCapture::exportFrameToFile(const Image& frame,
 	const std::string& videoName,
 	int frameNumber) {
 
-	GE_HOOK(ScreenCapture::exportFrameToFile, this, frame, videoFolder, videoName, frameNumber);
+	GE_HOOK_V(ScreenCapture::exportFrameToFile, this, frame, videoFolder, videoName, frameNumber);
 
 	if (!std::filesystem::exists(videoFolder)) {
 		printf("Warning: Frame export folder does not exist: %s\n",
@@ -88,7 +88,7 @@ void ScreenCapture::exportFrameToFile(const Image& frame,
 }
 
 void ScreenCapture::exportMemoryFramesToDisk() {
-	GE_HOOK(ScreenCapture::exportMemoryFramesToDisk, this);
+	GE_HOOK_V(ScreenCapture::exportMemoryFramesToDisk, this);
 
 	if (myFrames.empty()) {
 		printf("No frames in memory to export.\n");
@@ -143,7 +143,7 @@ void ScreenCapture::exportMemoryFramesToDisk() {
 }
 
 void ScreenCapture::discardMemoryFrames() {
-	GE_HOOK(ScreenCapture::discardMemoryFrames, this);
+	GE_HOOK_V(ScreenCapture::discardMemoryFrames, this);
 
 	if (myFrames.empty()) {
 		printf("No frames in memory to discard.\n");
@@ -163,7 +163,7 @@ void ScreenCapture::discardMemoryFrames() {
 }
 
 void ScreenCapture::createFramesFolder(const std::string& folderPath) {
-	GE_HOOK(ScreenCapture::createFramesFolder, this, folderPath);
+	GE_HOOK_V(ScreenCapture::createFramesFolder, this, folderPath);
 
 	if (!std::filesystem::exists(folderPath)) {
 		try {
@@ -176,7 +176,7 @@ void ScreenCapture::createFramesFolder(const std::string& folderPath) {
 }
 
 void ScreenCapture::discardRecording() {
-	GE_HOOK(ScreenCapture::discardRecording, this);
+	GE_HOOK_V(ScreenCapture::discardRecording, this);
 
 	// Clean up video folder and any files if it was created
 	if (!this->videoFolder.empty()) {

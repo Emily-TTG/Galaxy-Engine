@@ -8,7 +8,7 @@ ParticleSelection::ParticleSelection() {
 }
 
 void ParticleSelection::clusterSelection(UpdateVariables& myVar, UpdateParameters& myParam) {
-	GE_HOOK(ParticleSelection::clusterSelection, this, myVar, myParam);
+	GE_HOOK_V(ParticleSelection::clusterSelection, this, myVar, myParam);
 
 	static bool isMouseMoving = false;
 	static glm::vec2 dragStartPos = { 0.0f, 0.0f };
@@ -81,7 +81,7 @@ void ParticleSelection::clusterSelection(UpdateVariables& myVar, UpdateParameter
 }
 
 void ParticleSelection::particleSelection(UpdateVariables& myVar, UpdateParameters& myParam) {
-	GE_HOOK(ParticleSelection::particleSelection, this, myVar, myParam);
+	GE_HOOK_V(ParticleSelection::particleSelection, this, myVar, myParam);
 
 	static bool isMouseMoving = false;
 	static glm::vec2 dragStartPos = { 0.0f, 0.0f };
@@ -147,7 +147,7 @@ void ParticleSelection::particleSelection(UpdateVariables& myVar, UpdateParamete
 
 
 void ParticleSelection::manyClustersSelection(UpdateVariables& myVar, UpdateParameters& myParam) {
-	GE_HOOK(ParticleSelection::manyClustersSelection, this, myVar, myParam);
+	GE_HOOK_V(ParticleSelection::manyClustersSelection, this, myVar, myParam);
 
 	if (selectManyClusters) {
 		if (!myVar.isGlobalTrailsEnabled) {
@@ -187,7 +187,7 @@ void ParticleSelection::manyClustersSelection(UpdateVariables& myVar, UpdatePara
 }
 
 void ParticleSelection::boxSelection(UpdateParameters& myParam) {
-	GE_HOOK(ParticleSelection::boxSelection, this, myParam);
+	GE_HOOK_V(ParticleSelection::boxSelection, this, myParam);
 
 	if ((IsKeyDown(KEY_LEFT_CONTROL) && IsMouseButtonDown(2)) || (IsKeyDown(KEY_LEFT_ALT) && IsMouseButtonDown(2))) {
 		if (IO::shortcutPress(KEY_LEFT_CONTROL) || IsMouseButtonPressed(2)) {
@@ -243,7 +243,7 @@ void ParticleSelection::boxSelection(UpdateParameters& myParam) {
 }
 
 void ParticleSelection::invertSelection(std::vector<ParticleRendering>& rParticles){
-	GE_HOOK(ParticleSelection::invertSelection, this, rParticles);
+	GE_HOOK_V(ParticleSelection::invertSelection, this, rParticles);
 
 	if (IO::shortcutPress(KEY_I)) {
 		invertParticleSelection = true;
@@ -260,7 +260,7 @@ void ParticleSelection::invertSelection(std::vector<ParticleRendering>& rParticl
 }
 
 void ParticleSelection::deselection(std::vector<ParticleRendering>& rParticles){
-	GE_HOOK(ParticleSelection::deselection, this, rParticles);
+	GE_HOOK_V(ParticleSelection::deselection, this, rParticles);
 
 	if (deselectParticles || IO::shortcutPress(KEY_D)) {
 		for (auto& rParticle : rParticles) {
@@ -271,7 +271,7 @@ void ParticleSelection::deselection(std::vector<ParticleRendering>& rParticles){
 }
 
 void ParticleSelection::selectedParticlesStoring(UpdateParameters& myParam) {
-	GE_HOOK(ParticleSelection::selectedParticlesStoring, this, myParam);
+	GE_HOOK_V(ParticleSelection::selectedParticlesStoring, this, myParam);
 
 	myParam.rParticlesSelected.clear();
 	myParam.pParticlesSelected.clear();

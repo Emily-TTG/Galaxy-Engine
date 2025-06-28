@@ -42,7 +42,7 @@ size_t dualPartition(std::vector<T>& pParticlesVector, std::vector<U>& rParticle
 }
 
 void Quadtree::subGridMaker(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles) {
-	GE_HOOK(Quadtree::subGridMaker, this, pParticles, rParticles);
+	GE_HOOK_V(Quadtree::subGridMaker, this, pParticles, rParticles);
 
 	glm::vec2 mid = pos + size * 0.5f;
 
@@ -109,7 +109,7 @@ Quadtree* Quadtree::boundingBox(const std::vector<ParticlePhysics>& pParticles,
 }
 
 void Quadtree::drawQuadtree() {
-	GE_HOOK(Quadtree::drawQuadtree, this);
+	GE_HOOK_V(Quadtree::drawQuadtree, this);
 
 	DrawRectangleLinesEx({ pos.x, pos.y, size, size }, 1.0f, WHITE);
 

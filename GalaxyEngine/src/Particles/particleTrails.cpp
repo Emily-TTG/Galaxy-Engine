@@ -5,7 +5,7 @@
 #include "parameters.h"
 
 void ParticleTrails::trailLogic(UpdateVariables& myVar, UpdateParameters& myParam) {
-	GE_HOOK(ParticleTrails::trailLogic, this, myVar, myParam);
+	GE_HOOK_V(ParticleTrails::trailLogic, this, myVar, myParam);
 
 	if (IO::shortcutPress(KEY_T) && !IsKeyDown(KEY_LEFT_CONTROL)) {
 		myVar.isGlobalTrailsEnabled = !myVar.isGlobalTrailsEnabled;
@@ -123,7 +123,7 @@ void ParticleTrails::trailLogic(UpdateVariables& myVar, UpdateParameters& myPara
 
 
 void ParticleTrails::drawTrail(std::vector<ParticleRendering>& rParticles, Texture2D& particleBlur) {
-	GE_HOOK(ParticleTrails::drawTrail, this, rParticles, particleBlur);
+	GE_HOOK_V(ParticleTrails::drawTrail, this, rParticles, particleBlur);
 
 	if (!whiteTrails) {
 		for (size_t i = 0; i < trailDots.size(); i++) {

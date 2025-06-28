@@ -114,10 +114,15 @@ inline void Mod::VoidOrDefault() {}
 
 class ModRegistry {
 	static ModRegistry globalRegistry;
+	static thread_local bool terminate;
 
 	std::vector<Mod> mods;
 
 public:
+	static void Terminate() { terminate = true; }
+	static bool GetTerminate() { return terminate; }
+	static void ClearTerminate() { terminate = false; }
+
 	static auto& Get() { return globalRegistry; }
 
 	void Add(const std::string& path) {
@@ -130,12 +135,30 @@ public:
 
 // NOTE: This is a macro rather than a function for the following reasons:
 //		 a) the persistent `hook_symbol_` static needs to be held at callsite.
-//		 b) hooks in future will be able to force early return from the vanilla proc.
+//		 b) post hooks use a RAII'd object to hook on all frame exits.
+//		 c) hooks in future will be able to force early return from the vanilla proc.
 #define GE_HOOK(fn, ...) \
 		do { \
 			auto& hook_mods_ = ModRegistry::Get().GetMods(); \
 			static const auto& hook_symbol_ = Mod::CurrentSym(); \
 			for(auto& hook_mod_ : hook_mods_) { \
+				auto&& hook_return_ = hook_mod_.HookAt<decltype(&fn)>(hook_symbol_, ## __VA_ARGS__); \
+            	if(ModRegistry::GetTerminate()) { \
+					ModRegistry::ClearTerminate(); \
+					return hook_return_; \
+				} \
+            } \
+		} while(0)
+
+#define GE_HOOK_V(fn, ...) \
+		do { \
+			auto& hook_mods_ = ModRegistry::Get().GetMods(); \
+			static const auto& hook_symbol_ = Mod::CurrentSym(); \
+			for(auto& hook_mod_ : hook_mods_) { \
 				hook_mod_.HookAt<decltype(&fn)>(hook_symbol_, ## __VA_ARGS__); \
+            	if(ModRegistry::GetTerminate()) { \
+					ModRegistry::ClearTerminate(); \
+					return; \
+				} \
             } \
 		} while(0)

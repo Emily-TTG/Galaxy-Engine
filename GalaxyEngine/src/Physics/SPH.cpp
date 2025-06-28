@@ -5,7 +5,7 @@
 void SPH::computeViscCohesionForces(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles,
 	std::vector<glm::vec2>& sphForce, size_t& N) {
 
-	GE_HOOK(SPH::computeViscCohesionForces, this, pParticles, rParticles, sphForce, N);
+	GE_HOOK_V(SPH::computeViscCohesionForces, this, pParticles, rParticles, sphForce, N);
 
 	const float h = radiusMultiplier;
 	const float h2 = h * h;
@@ -66,7 +66,7 @@ void SPH::computeViscCohesionForces(std::vector<ParticlePhysics>& pParticles, st
 }
 
 void SPH::PCISPH(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles, float& dt) {
-	GE_HOOK(SPH::PCISPH, this, pParticles, rParticles, dt);
+	GE_HOOK_V(SPH::PCISPH, this, pParticles, rParticles, dt);
 
 	size_t N = pParticles.size();
 
@@ -218,7 +218,7 @@ void SPH::PCISPH(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleR
 }
 
 void SPH::groundModeBoundary(std::vector<ParticlePhysics>& pParticles, std::vector<ParticleRendering>& rParticles, glm::vec2 domainSize) {
-	GE_HOOK(SPH::groundModeBoundary, this, pParticles, rParticles, domainSize);
+	GE_HOOK_V(SPH::groundModeBoundary, this, pParticles, rParticles, domainSize);
 
 #pragma omp parallel for
 	for (size_t i = 0; i < pParticles.size(); ++i) {

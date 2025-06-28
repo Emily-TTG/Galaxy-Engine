@@ -29,7 +29,7 @@ uint32_t Morton::morton2D(uint32_t x, uint32_t y) {
 }
 
 void Morton::computeMortonKeys(std::vector<ParticlePhysics>& pParticles, glm::vec2& minPosition, float& size){
-	GE_HOOK(Morton::computeMortonKeys, this, pParticles, minPosition, size);
+	GE_HOOK_V(Morton::computeMortonKeys, this, pParticles, minPosition, size);
 
     const float maxX = minPosition.x + std::max(size, 1e-6f);
     const float maxY = minPosition.y + std::max(size, 1e-6f);
@@ -45,7 +45,7 @@ void Morton::sortParticlesByMortonKey(
     std::vector<ParticlePhysics>& pParticles,
     std::vector<ParticleRendering>& rParticles)
 {
-	GE_HOOK(Morton::sortParticlesByMortonKey, pParticles, rParticles);
+	GE_HOOK_V(Morton::sortParticlesByMortonKey, pParticles, rParticles);
 
     std::vector<size_t> indices(pParticles.size());
     for (size_t i = 0; i < indices.size(); i++) {

@@ -6,7 +6,7 @@
 #include "parameters.h"
 
 void Controls::showControls() {
-	GE_HOOK(Controls::showControls, this);
+	GE_HOOK_V(Controls::showControls, this);
 
     if (isShowControlsEnabled) {
 
@@ -40,7 +40,7 @@ void Controls::showControls() {
 }
 
 void Controls::showInfo(bool& fullscreen) {
-	GE_HOOK(Controls::showInfo, this, fullscreen);
+	GE_HOOK_V(Controls::showInfo, this, fullscreen);
 
     if (isInformationEnabled) {
 

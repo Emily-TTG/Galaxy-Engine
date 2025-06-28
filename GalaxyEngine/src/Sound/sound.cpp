@@ -21,7 +21,7 @@ std::vector<Sound> GESound::soundButtonDisablePool;
 std::vector<Sound> GESound::soundSliderSlidePool;
 
 void GESound::loadSounds() {
-	GE_HOOK(GESound::loadSounds, this);
+	GE_HOOK_V(GESound::loadSounds, this);
 
 	InitAudioDevice();
 
@@ -63,7 +63,7 @@ void GESound::loadSounds() {
 }
 
 void GESound::soundtrackLogic() {
-	GE_HOOK(GESound::soundtrackLogic, this);
+	GE_HOOK_V(GESound::soundtrackLogic, this);
 
     SetMasterVolume(globalVolume);
     SetMusicVolume(currentMusic, musicVolume * musicVolMultiplier);
@@ -127,7 +127,7 @@ void GESound::soundtrackLogic() {
 }
 
 void GESound::unloadSounds() {
-	GE_HOOK(GESound::unloadSounds, this);
+	GE_HOOK_V(GESound::unloadSounds, this);
 
 	UnloadSound(intro);
 

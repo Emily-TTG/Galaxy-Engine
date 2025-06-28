@@ -8,7 +8,7 @@
 void RightClickSettings::rightClickMenuSpawnLogic(bool& isMouseNotHoveringUI,
 	bool& isSpawningAllowed, bool& isDragging, bool& selectedColor)
 {
-	GE_HOOK(RightClickSettings::rightClickMenuSpawnLogic, this, isMouseNotHoveringUI, isSpawningAllowed, isDragging, selectedColor);
+	GE_HOOK_V(RightClickSettings::rightClickMenuSpawnLogic, this, isMouseNotHoveringUI, isSpawningAllowed, isDragging, selectedColor);
 
 	static bool     isMouseMoving = false;
 	static glm::vec2  dragStartPos = { 0.0f, 0.0f };
@@ -65,7 +65,7 @@ void RightClickSettings::rightClickMenuSpawnLogic(bool& isMouseNotHoveringUI,
 
 
 void RightClickSettings::rightClickMenu(UpdateVariables& myVar, UpdateParameters& myParam) {
-	GE_HOOK(RightClickSettings::rightClickMenu, this, myVar, myParam);
+	GE_HOOK_V(RightClickSettings::rightClickMenu, this, myVar, myParam);
 
 	rightClickMenuSpawnLogic(myVar.isMouseNotHoveringUI, myParam.particlesSpawning.isSpawningAllowed, myVar.isDragging, myParam.colorVisuals.selectedColor);
 

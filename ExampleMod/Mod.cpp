@@ -32,5 +32,6 @@ void loadConfig() {
 }
 
 glm::vec2 Physics::calculateForceFromGrid(const Quadtree& grid, std::vector<ParticlePhysics>& pParticles, UpdateVariables& myVar, ParticlePhysics& pParticle) {
+	ModRegistry::Terminate();
 	return { 0, 0 };
 }

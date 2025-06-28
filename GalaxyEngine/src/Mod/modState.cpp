@@ -7,6 +7,7 @@
 #endif
 
 ModRegistry ModRegistry::globalRegistry;
+thread_local bool ModRegistry::terminate = false;
 
 struct GEModInitReport GEMod::Startup(const struct GEModInitData& data) {
 	return {};
@@ -73,9 +74,6 @@ Mod& Mod::operator=(Mod&& other) noexcept {
 Mod::HookFn* Mod::GetSym(const std::string& sym) {
 #ifdef _WIN32
 #else
-	auto a = (HookFn*) dlsym(module, sym.c_str());
-	auto b = (HookFn*) dlsym(RTLD_NEXT, sym.c_str());
-	auto c = (HookFn*) dlsym(RTLD_DEFAULT, sym.c_str());
-	return a;
+	return (HookFn*) dlsym(module, sym.c_str());
 #endif
 }

@@ -26,7 +26,7 @@ Quadtree* gridFunction(std::vector<ParticlePhysics>& pParticles,
 
 
 void flattenQuadtree(Quadtree* node, std::vector<Quadtree*>& flatList) {
-	GE_HOOK(flattenQuadtree, node, flatList);
+	GE_HOOK_V(flattenQuadtree, node, flatList);
 
 	if (!node) return;
 
@@ -40,7 +40,7 @@ void flattenQuadtree(Quadtree* node, std::vector<Quadtree*>& flatList) {
 
 // THIS FUNCTION IS MEANT FOR QUICK DEBUGGING WHERE YOU NEED TO CHECK A SPECIFIC PARTICLE'S VARIABLES
 void selectedParticleDebug() {
-	GE_HOOK(selectedParticleDebug);
+	GE_HOOK_V(selectedParticleDebug);
 
 	for (size_t i = 0; i < myParam.pParticles.size(); i++) {
 		ParticlePhysics& p = myParam.pParticles[i];
@@ -52,7 +52,7 @@ void selectedParticleDebug() {
 }
 
 void pinParticles() {
-	GE_HOOK(pinParticles);
+	GE_HOOK_V(pinParticles);
 
 	if (myVar.pinFlag) {
 		for (size_t i = 0; i < myParam.pParticles.size(); i++) {
@@ -89,7 +89,7 @@ void pinParticles() {
 }
 
 void updateScene() {
-	GE_HOOK(updateScene);
+	GE_HOOK_V(updateScene);
 
 	Quadtree* grid = nullptr;
 
@@ -284,7 +284,7 @@ void updateScene() {
 }
 
 void drawConstraints() {
-	GE_HOOK(drawConstraints);
+	GE_HOOK_V(drawConstraints);
 
 	if (myVar.visualizeMesh) {
 		rlBegin(RL_LINES);
@@ -443,7 +443,7 @@ std::vector<std::pair<std::string, int>> introMessages = {
 };
 
 void drawScene(Texture2D& particleBlurTex, RenderTexture2D& myUITexture, RenderTexture2D& myMiscTexture, bool& fadeActive, bool& introActive) {
-	GE_HOOK(drawScene, particleBlurTex, myUITexture, myMiscTexture, fadeActive, introActive);
+	GE_HOOK_V(drawScene, particleBlurTex, myUITexture, myMiscTexture, fadeActive, introActive);
 
 	for (int i = 0; i < myParam.pParticles.size(); ++i) {
 
@@ -605,7 +605,7 @@ float lastMusicVolume = -1.0f;
 int lastMessageIndex = -1;
 
 void saveConfigIfChanged() {
-	GE_HOOK(saveConfigIfChanged);
+	GE_HOOK_V(saveConfigIfChanged);
 
 	if (geSound.globalVolume != lastGlobalVolume ||
 		geSound.menuVolume != lastMenuVolume ||
@@ -622,7 +622,7 @@ void saveConfigIfChanged() {
 }
 
 void saveConfig() {
-	GE_HOOK(saveConfig);
+	GE_HOOK_V(saveConfig);
 
 	if (!std::filesystem::exists("Config")) {
 		std::filesystem::create_directory("Config");
@@ -638,7 +638,7 @@ void saveConfig() {
 }
 
 void loadConfig() {
-	GE_HOOK(loadConfig);
+	GE_HOOK_V(loadConfig);
 
 	YAML::Node config = YAML::LoadFile("Config/config.txt");
 
@@ -653,7 +653,7 @@ void loadConfig() {
 }
 
 void enableMultiThreading() {
-	GE_HOOK(enableMultiThreading);
+	GE_HOOK_V(enableMultiThreading);
 
 	if (myVar.isMultiThreadingEnabled) {
 		omp_set_num_threads(myVar.threadsAmount);
@@ -667,7 +667,7 @@ void fullscreenToggle(int& lastScreenWidth, int& lastScreenHeight,
 	bool& wasFullscreen, bool& lastScreenState,
 	RenderTexture2D& myParticlesTexture, RenderTexture2D& myUITexture) {
 
-	GE_HOOK(fullscreenToggle, lastScreenWidth, lastScreenHeight, wasFullscreen, lastScreenState, myParticlesTexture, myUITexture);
+	GE_HOOK_V(fullscreenToggle, lastScreenWidth, lastScreenHeight, wasFullscreen, lastScreenState, myParticlesTexture, myUITexture);
 
 	if (myVar.fullscreenState != lastScreenState) {
 		int monitor = GetCurrentMonitor();

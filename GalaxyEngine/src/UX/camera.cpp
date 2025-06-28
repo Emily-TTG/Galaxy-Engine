@@ -67,7 +67,7 @@ Camera2D SceneCamera::cameraLogic(bool& loadFlag, bool& isMouseNotHoveringUI) {
 }
 
 void SceneCamera::cameraFollowObject(UpdateVariables& myVar, UpdateParameters& myParam) {
-	GE_HOOK(SceneCamera::cameraFollowObject, this, myVar, myParam);
+	GE_HOOK_V(SceneCamera::cameraFollowObject, this, myVar, myParam);
 
 	mouseWorldPos = glm::vec2(GetScreenToWorld2D(GetMousePosition(), camera).x, GetScreenToWorld2D(GetMousePosition(), camera).y);
 

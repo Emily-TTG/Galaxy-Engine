@@ -5,7 +5,7 @@
 #include "parameters.h"
 
 void ParticleSubdivision::subdivideParticles(UpdateVariables& myVar, UpdateParameters& myParam) {
-	GE_HOOK(ParticleSubdivision::subdivideParticles, this, myVar, myParam);
+	GE_HOOK_V(ParticleSubdivision::subdivideParticles, this, myVar, myParam);
 
 	if (subdivideAll || subdivideSelected) {
 

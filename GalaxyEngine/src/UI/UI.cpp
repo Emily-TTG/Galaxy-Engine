@@ -3,7 +3,7 @@
 #include "Mod/modState.h"
 
 void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, SaveSystem& save, GESound& geSound) {
-	GE_HOOK(UI::uiLogic, this, myParam, myVar, sph, save, geSound);
+	GE_HOOK_V(UI::uiLogic, this, myParam, myVar, sph, save, geSound);
 
 	if (IO::shortcutPress(KEY_U)) {
 		showSettings = !showSettings;
@@ -438,7 +438,7 @@ void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, Sa
 }
 
 void UI::statsWindowLogic(UpdateParameters& myParam, UpdateVariables& myVar) {
-	GE_HOOK(UI::statsWindowLogic, this, myParam, myVar);
+	GE_HOOK_V(UI::statsWindowLogic, this, myParam, myVar);
 
 	ImGui::Spacing();
 	ImGui::Separator();
@@ -701,7 +701,7 @@ void UI::plotLinesHelper(const float& timeFactor, std::string label,
 	const int length,
 	float value, const float minValue, const float maxValue, ImVec2 size) {
 
-	GE_HOOK(UI::plotLinesHelper, timeFactor, label, length, value, minValue, maxValue, size);
+	GE_HOOK_V(UI::plotLinesHelper, timeFactor, label, length, value, minValue, maxValue, size);
 
 	auto& plotData = plotDataMap[label];
 
