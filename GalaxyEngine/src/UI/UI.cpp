@@ -2,7 +2,7 @@
 
 #include "Mod/modState.h"
 
-void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, SaveSystem& save, GESound& geSound) {
+void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, SaveSystem& save, GESound& geSound, Lighting& lighting) {
 	GE_HOOK_V(UI::uiLogic, this, myParam, myVar, sph, save, geSound);
 
 	if (IO::shortcutPress(KEY_U)) {
@@ -159,6 +159,7 @@ void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, Sa
 			bStatsWindow = false;
 			bRecordingSettings = false;
 			bSoundWindow = false;
+			bLightingWindow = false;
 
 			// Initialize all tabs for sliders defaults
 			if (loadSettings) {
@@ -167,6 +168,7 @@ void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, Sa
 				bStatsWindow = true;
 				bRecordingSettings = true;
 				bSoundWindow = true;
+				bLightingWindow = true;
 
 				loadSettings = false;
 			}
@@ -181,6 +183,7 @@ void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, Sa
 			bStatsWindow = false;
 			bRecordingSettings = false;
 			bSoundWindow = false;
+			bLightingWindow = false;
 
 			ImGui::EndTabItem();
 		}
@@ -192,6 +195,19 @@ void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, Sa
 			bStatsWindow = true;
 			bRecordingSettings = false;
 			bSoundWindow = false;
+			bLightingWindow = false;
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Lighting")) {
+
+			bVisualsSliders = false;
+			bPhysicsSliders = false;
+			bStatsWindow = false;
+			bRecordingSettings = false;
+			bSoundWindow = false;
+			bLightingWindow = true;
 
 			ImGui::EndTabItem();
 		}
@@ -203,6 +219,7 @@ void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, Sa
 			bStatsWindow = false;
 			bRecordingSettings = false;
 			bSoundWindow = true;
+			bLightingWindow = false;
 
 			ImGui::EndTabItem();
 		}
@@ -214,6 +231,7 @@ void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, Sa
 			bStatsWindow = false;
 			bRecordingSettings = true;
 			bSoundWindow = false;
+			bLightingWindow = false;
 
 			ImGui::EndTabItem();
 		}
@@ -280,6 +298,8 @@ void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, Sa
 			sliderHelper("Max Neighbors", "Controls the maximum neighbor count range", myParam.colorVisuals.maxNeighbors, 1, 500, parametersSliderX, parametersSliderY, enabled);
 			sliderHelper("Max Color Force", "Controls the acceleration threshold to use the secondary color", myParam.colorVisuals.maxColorAcc, 1.0f, 400.0f, parametersSliderX, parametersSliderY, enabled);
 			sliderHelper("Max Size Force", "Controls the acceleration threshold to map the particle size", myParam.densitySize.sizeAcc, 1.0f, 400.0f, parametersSliderX, parametersSliderY, enabled);
+			sliderHelper("Max Dynamic Size", "Controls the maximum size particles can have when chaning size dynamically", myParam.densitySize.maxSize, 0.1f, 5.0f, parametersSliderX, parametersSliderY, enabled);
+			sliderHelper("Min Dynamic Size", "Controls the minimum size particles can have when chaning size dynamically", myParam.densitySize.minSize, 0.001f, 5.0f, parametersSliderX, parametersSliderY, enabled);
 			sliderHelper("Max Shockwave Accel", "Controls the acceleration threshold to map the particle color in Shockwave color mode", myParam.colorVisuals.ShockwaveMaxAcc, 1.0f, 120.0f, parametersSliderX, parametersSliderY, enabled);
 			sliderHelper("Max Velocity Color", "Controls the max velocity used to map the colors in the velocity color mode", myParam.colorVisuals.maxVel, 10.0f, 10000.0f, parametersSliderX, parametersSliderY, enabled);
 			sliderHelper("Max Pressure Color", "Controls the max pressure used to map the colors in the pressure color mode", myParam.colorVisuals.maxPress, 100.0f, 100000.0f, parametersSliderX, parametersSliderY, enabled);
@@ -392,6 +412,101 @@ void UI::uiLogic(UpdateParameters& myParam, UpdateVariables& myVar, SPH& sph, Sa
 
 		if (bStatsWindow) {
 			statsWindowLogic(myParam, myVar);
+		}
+
+		if (bLightingWindow) {
+
+			bool enabled = true;
+
+			ImGui::Text("Galaxy Engine 1.7.0 - Lighting Beta");
+			ImGui::Text("Beta placeholder controls (Will change");
+			ImGui::Text("in the final version):");
+			ImGui::Text("Hold and drag V: Create wall");
+			ImGui::Text("Press 5: Create point light");
+			ImGui::Text("Hold and drag 6: Create area light");
+			ImGui::Text("Press 7: Create circle");
+			ImGui::Text("Hold and drag 8: Draw shape");
+			ImGui::Text("Hold and drag 9: Make Lens");
+			ImGui::Text("Hold and drag 0: Move shape helper");
+			ImGui::Text("Hold and drag 0 + RSHIFT: Move both lens sides");
+			ImGui::Text("Hold and drag M: Move walls and lights");
+
+			ImGui::Text("");
+
+			ImGui::Text("Be careful with these sliders,");
+			ImGui::Text("they can make the program run very slow.");
+			
+
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			ImVec4 imguiLightColor = rlImGuiColors::Convert(lighting.lightColor);
+
+			Color imguiLightColorRl;
+
+			if (ImGui::ColorPicker4("Light Color", (float*)&imguiLightColor, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB)) {
+				imguiLightColorRl = rlImGuiColors::Convert(imguiLightColor);
+				lighting.lightColor.r = imguiLightColorRl.r;
+				lighting.lightColor.g = imguiLightColorRl.g;
+				lighting.lightColor.b = imguiLightColorRl.b;
+				lighting.lightColor.a = imguiLightColorRl.a;
+			}
+
+			ImVec4 imguiWallBaseColor = rlImGuiColors::Convert(lighting.wallBaseColor);
+
+			Color imguiWallBaseColorRl;
+
+			if (ImGui::ColorPicker4("Wall Base Color", (float*)&imguiWallBaseColor, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB)) {
+				imguiWallBaseColorRl = rlImGuiColors::Convert(imguiWallBaseColor);
+				lighting.wallBaseColor.r = imguiWallBaseColorRl.r;
+				lighting.wallBaseColor.g = imguiWallBaseColorRl.g;
+				lighting.wallBaseColor.b = imguiWallBaseColorRl.b;
+				lighting.wallBaseColor.a = imguiWallBaseColorRl.a;
+			}
+
+			ImVec4 imguiWallSpecularColor = rlImGuiColors::Convert(lighting.wallSpecularColor);
+
+			Color imguiWallSpecularColorRl;
+
+			if (ImGui::ColorPicker4("Wall Specular Color", (float*)&imguiWallSpecularColor, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB)) {
+				imguiWallSpecularColorRl = rlImGuiColors::Convert(imguiWallSpecularColor);
+				lighting.wallSpecularColor.r = imguiWallSpecularColorRl.r;
+				lighting.wallSpecularColor.g = imguiWallSpecularColorRl.g;
+				lighting.wallSpecularColor.b = imguiWallSpecularColorRl.b;
+				lighting.wallSpecularColor.a = imguiWallSpecularColorRl.a;
+			}
+
+			ImVec4 imguiWallRefractionColor = rlImGuiColors::Convert(lighting.wallRefractionColor);
+
+			Color imguiWallRefractionColorRl;
+
+			if (ImGui::ColorPicker4("Wall Refraction Color", (float*)&imguiWallRefractionColor, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB)) {
+				imguiWallRefractionColorRl = rlImGuiColors::Convert(imguiWallRefractionColor);
+				lighting.wallRefractionColor.r = imguiWallRefractionColorRl.r;
+				lighting.wallRefractionColor.g = imguiWallRefractionColorRl.g;
+				lighting.wallRefractionColor.b = imguiWallRefractionColorRl.b;
+				lighting.wallRefractionColor.a = imguiWallRefractionColorRl.a;
+			}
+
+			sliderHelper("Wall Specular Roughness", "Controls the specular reflections roughness of the next wall drawn", lighting.wallSpecularRoughness, 0.0f, 1.0f, parametersSliderX, parametersSliderY, enabled);
+			sliderHelper("Wall Refraction Roughness", "Controls the refraction surface roughness of the next wall drawn", lighting.wallRefractionRoughness, 0.0f, 1.0f, parametersSliderX, parametersSliderY, enabled);
+
+			sliderHelper("Wall Refraction Amount", "Controls how much light the next wall will refract", lighting.wallRefractionAmount, 0.0f, 1.0f, parametersSliderX, parametersSliderY, enabled);
+
+			sliderHelper("Wall IOR", "Controls the IOR of the next wall drawn", lighting.wallIOR, 0.0f, 100.0f, parametersSliderX, parametersSliderY, enabled);
+
+			sliderHelper("Max Samples", "Controls the total amount of lighting iterations", lighting.maxSamples, 1, 6, parametersSliderX, parametersSliderY, enabled);
+			sliderHelper("Rays Per Sample", "Controls amount of rays emitted on each sample", lighting.sampleRaysAmount, 1, 80000, parametersSliderX, parametersSliderY, enabled);
+			sliderHelper("Max Bounces", "Controls how many times rays can bounce", lighting.maxBounces, 0, 8, parametersSliderX, parametersSliderY, enabled);
+
+			buttonHelper("Global Illumination", "Enables global illumination", lighting.isDiffuseEnabled, - 1.0f, settingsButtonY, enabled, enabled);
+			buttonHelper("Specular Reflections", "Enables specular reflections", lighting.isSpecularEnabled, -1.0f, settingsButtonY, enabled, enabled);
+			buttonHelper("Refraction", "Enables refractions", lighting.isRefractionEnabled, -1.0f, settingsButtonY, enabled, enabled);
+
+			buttonHelper("Symmetrical Lens", "Makes both sides of the next lens editable", lighting.symmetricalLens, -1.0f, settingsButtonY, enabled, enabled);
+
+			buttonHelper("Show Normals", "Displays the direction a wall is pointing at, also know as the normal", lighting.drawNormals, -1.0f, settingsButtonY, enabled, enabled);
+
 		}
 	}
 

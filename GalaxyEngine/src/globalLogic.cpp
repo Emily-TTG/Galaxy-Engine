@@ -10,8 +10,10 @@ ParticleSpaceship ship;
 SPH sph;
 SaveSystem save;
 GESound geSound;
+Lighting lighting;
 
 uint32_t globalId = 0;
+uint32_t globalShapeId = 1;
 
 std::unordered_map<unsigned int, uint64_t> NeighborSearch::idToIndex;
 
@@ -90,6 +92,8 @@ void pinParticles() {
 
 void updateScene() {
 	GE_HOOK_V(updateScene);
+
+	lighting.rayLogic(myParam);
 
 	Quadtree* grid = nullptr;
 
@@ -511,7 +515,7 @@ void drawScene(Texture2D& particleBlurTex, RenderTexture2D& myUITexture, RenderT
 	// EVERYTHING STATIC RELATIVE TO CAMERA BELOW
 
 	if (!introActive) {
-		myUI.uiLogic(myParam, myVar, sph, save, geSound);
+		myUI.uiLogic(myParam, myVar, sph, save, geSound, lighting);
 	}
 
 	save.saveLoadLogic(myVar, myParam, sph, physics);
@@ -672,13 +676,12 @@ void fullscreenToggle(int& lastScreenWidth, int& lastScreenHeight,
 	if (myVar.fullscreenState != lastScreenState) {
 		int monitor = GetCurrentMonitor();
 
-		if (!IsWindowFullscreen())
-			SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
+		if (!IsWindowMaximized())
+			SetWindowSize(static_cast<float>(GetMonitorWidth(monitor)) * 0.5f, static_cast<float>(GetMonitorHeight(monitor)) * 0.5f);
 		else
-			SetWindowSize(myVar.screenWidth, myVar.screenHeight);
-
-		ToggleFullscreen();
-		wasFullscreen = IsWindowFullscreen();
+			SetWindowSize(static_cast<float>(GetMonitorWidth(monitor)) * 0.5f, static_cast<float>(GetMonitorHeight(monitor)) * 0.5f);
+		ToggleBorderlessWindowed();
+		wasFullscreen = IsWindowMaximized();;
 
 		UnloadRenderTexture(myParticlesTexture);
 		UnloadRenderTexture(myUITexture);
@@ -687,7 +690,7 @@ void fullscreenToggle(int& lastScreenWidth, int& lastScreenHeight,
 		lastScreenHeight = GetScreenHeight();
 		lastScreenState = myVar.fullscreenState;
 
-		myParticlesTexture = LoadRenderTexture(lastScreenWidth, lastScreenHeight);
+		myParticlesTexture = CreateFloatRenderTexture(lastScreenWidth, lastScreenHeight);;
 		myUITexture = LoadRenderTexture(lastScreenWidth, lastScreenHeight);
 	}
 
@@ -698,10 +701,33 @@ void fullscreenToggle(int& lastScreenWidth, int& lastScreenHeight,
 		UnloadRenderTexture(myParticlesTexture);
 		UnloadRenderTexture(myUITexture);
 
-		myParticlesTexture = LoadRenderTexture(currentScreenWidth, currentScreenHeight);
+		myParticlesTexture = CreateFloatRenderTexture(currentScreenWidth, currentScreenHeight);
 		myUITexture = LoadRenderTexture(currentScreenWidth, currentScreenHeight);
 
 		lastScreenWidth = currentScreenWidth;
 		lastScreenHeight = currentScreenHeight;
 	}
+}
+
+
+RenderTexture2D CreateFloatRenderTexture(int w, int h) {
+	RenderTexture2D fbo = { 0 };
+	glGenTextures(1, &fbo.texture.id);
+	glBindTexture(GL_TEXTURE_2D, fbo.texture.id);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, w, h, 0, GL_RGBA, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glGenFramebuffers(1, &fbo.id);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo.id);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo.texture.id, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	fbo.texture.width = w;
+	fbo.texture.height = h;
+	fbo.texture.format = PIXELFORMAT_UNCOMPRESSED_R16G16B16A16;
+
+	return fbo;
 }

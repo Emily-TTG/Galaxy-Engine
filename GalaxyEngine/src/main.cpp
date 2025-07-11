@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
 
 	Shader myBloom = LoadShader(nullptr, "Shaders/bloom.fs");
 
-	RenderTexture2D myParticlesTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+	RenderTexture2D myParticlesTexture = CreateFloatRenderTexture(GetScreenWidth(), GetScreenHeight());
 	RenderTexture2D myUITexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 	RenderTexture2D myMiscTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 
 	int lastScreenWidth = GetScreenWidth();
 	int lastScreenHeight = GetScreenHeight();
-	bool wasFullscreen = IsWindowFullscreen();
+	bool wasFullscreen = IsWindowMaximized();
 
 	bool lastScreenState = false;
 

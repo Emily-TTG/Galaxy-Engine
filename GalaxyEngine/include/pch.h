@@ -27,6 +27,7 @@
 #include <functional>
 #include <shared_mutex>
 #include <mutex>
+#include <random>
 
 // C stdlib
 #include <cmath>
